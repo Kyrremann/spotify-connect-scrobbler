@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import click
 import dateutil.parser
 from dateutil.tz import tzutc
 import os
@@ -30,9 +29,7 @@ def convert_to_lastfm(item):
     return {'name': track, 'artists': artists, 'played_at': played_at}
 
 
-@click.command()
-@click.argument('credentials_file', type=click.Path(exists=True))
-def main(credentials_file):
+def main():
     """Retrieves the 50 most recently played tracks from Spotify and scrobbles
     them to Last.fm.
     """
@@ -41,7 +38,7 @@ def main(credentials_file):
     LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
     LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
 
-    creds = credentials.load(credentials_file)
+    creds = credentials.load()
 
     client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
     response = client.recently_played_tracks(creds.spotify)
@@ -53,7 +50,7 @@ def main(credentials_file):
     print(scrobbles)
 
     # The credentials might have changed.
-    creds.save(credentials_file)
+    creds.save()
 
 
 if __name__ == "__main__":

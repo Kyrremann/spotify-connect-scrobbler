@@ -102,3 +102,6 @@ ENV/
 
 # Config
 test.json
+
+# Emacs backups
+*~

@@ -1,5 +1,6 @@
 import json
-
+import os
+import pymongo
 
 class LastfmCredentials:
     """LastFM API credentials.
@@ -50,14 +51,14 @@ class Credentials:
         self.lastfm = lastfm
         self.spotify = spotify
 
-    def save(self, config_file_path):
-        """Save credentials to file.
+    def save(self):
+        """Save credentials to MongoDB database.
 
         Args:
             config_file_path (path-like object): Path to file containing
             credentials. The file os opened and closed by this method.
         """
-        with open(config_file_path, 'w') as f:
+        """with open(config_file_path, 'w') as f:
             data = {}
             if self.lastfm is not None:
                 data['lastfm'] = {'session_key': self.lastfm.session_key}
@@ -70,27 +71,29 @@ class Credentials:
                     'scope': self.spotify.scope
                 }
 
-            json.dump(data, f)
+            json.dump(data, f)"""
+        # TODO: Update the correct document
 
 
-def load(config_file_path):
-    """Load credentials from file.
-
-    Args:
-        config_file_path (path-like object): Path were to save credentials.
+def load():
+    """Load credentials from MongoDB database.
 
     Returns:
         Credentials: object with LastFM and Spotify credentials.
     """
-    with open(config_file_path, 'r') as f:
-        data = json.load(f)
+    client = pymongo.MongoClient(os.environ['MONGODB_URI'])
+    db = client[os.environ['MONGODB_DATABASE']]
+    posts = db[os.environ['MONGODB_COLLECTION']]
+    data = posts.find_one()
 
-        lastfm = LastfmCredentials(data['lastfm']['session_key'])
-        spotify = SpotifyCredentials(
-            data['spotify']['access_token'],
-            data['spotify']['token_type'],
-            data['spotify']['refresh_token'],
-            data['spotify']['scope']
-        )
 
-        return Credentials(lastfm, spotify)
+    # TODO: Save the document id
+    lastfm = LastfmCredentials(data['lastfm']['session_key'])
+    spotify = SpotifyCredentials(
+        data['spotify']['access_token'],
+        data['spotify']['token_type'],
+        data['spotify']['refresh_token'],
+        data['spotify']['scope']
+    )
+
+    return Credentials(lastfm, spotify)
