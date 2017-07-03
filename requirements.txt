@@ -3,4 +3,4 @@ flake8
 pytest
 python-dateutil
 requests
-psycopg2
+pymongo
