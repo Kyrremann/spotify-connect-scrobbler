@@ -1,6 +1,9 @@
+from bson.objectid import ObjectId
+
 import json
 import os
 import pymongo
+
 
 class LastfmCredentials:
     """LastFM API credentials.
@@ -47,32 +50,32 @@ class SpotifyCredentials:
 
 class Credentials:
 
-    def __init__(self, lastfm, spotify):
+    def __init__(self, lastfm, spotify, document_id=None):
         self.lastfm = lastfm
         self.spotify = spotify
+        self.document_id = document_id
 
     def save(self):
         """Save credentials to MongoDB database.
-
-        Args:
-            config_file_path (path-like object): Path to file containing
-            credentials. The file os opened and closed by this method.
         """
-        """with open(config_file_path, 'w') as f:
-            data = {}
-            if self.lastfm is not None:
-                data['lastfm'] = {'session_key': self.lastfm.session_key}
+        data = {}
 
-            if self.spotify is not None:
-                data['spotify'] = {
-                    'access_token': self.spotify.access_token,
-                    'token_type': self.spotify.token_type,
-                    'refresh_token': self.spotify.refresh_token,
-                    'scope': self.spotify.scope
-                }
+        if self.lastfm is not None:
+            data['lastfm'] = {'session_key': self.lastfm.session_key}
 
-            json.dump(data, f)"""
-        # TODO: Update the correct document
+        if self.spotify is not None:
+            data['spotify'] = {
+                'access_token': self.spotify.access_token,
+                'token_type': self.spotify.token_type,
+                'refresh_token': self.spotify.refresh_token,
+                'scope': self.spotify.scope
+            }
+
+        client = pymongo.MongoClient(os.environ['MONGODB_URI'])
+        db = client[os.environ['MONGODB_DATABASE']]
+        collection = db[os.environ['MONGODB_COLLECTION']]
+
+        collection.update_one({'_id': ObjectId(self.document_id)}, {'$set': data})
 
 
 def load():
@@ -83,17 +86,15 @@ def load():
     """
     client = pymongo.MongoClient(os.environ['MONGODB_URI'])
     db = client[os.environ['MONGODB_DATABASE']]
-    posts = db[os.environ['MONGODB_COLLECTION']]
-    data = posts.find_one()
+    collection = db[os.environ['MONGODB_COLLECTION']]
+    document = collection.find_one()
 
-
-    # TODO: Save the document id
-    lastfm = LastfmCredentials(data['lastfm']['session_key'])
+    lastfm = LastfmCredentials(document['lastfm']['session_key'])
     spotify = SpotifyCredentials(
-        data['spotify']['access_token'],
-        data['spotify']['token_type'],
-        data['spotify']['refresh_token'],
-        data['spotify']['scope']
+        document['spotify']['access_token'],
+        document['spotify']['token_type'],
+        document['spotify']['refresh_token'],
+        document['spotify']['scope']
     )
 
-    return Credentials(lastfm, spotify)
+    return Credentials(lastfm, spotify, str(document['_id']))
