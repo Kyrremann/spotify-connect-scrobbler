@@ -2,21 +2,17 @@
 import hashlib
 import requests
 
-from .credentials import LastfmCredentials
-
-
 class LastfmClient:
     """ A simple client for the Last.fm API."""
 
-    def __init__(self, key, secret):
+    def __init__(self, creds):
         """Creates a Last.fm client.
 
         Args:
             key (str): Web API key.
             secret (str): Web API secret.
         """
-        self.__key = key
-        self.__secret = secret
+        self.creds = creds
 
     def sign(self, parameters):
         """ Generates the signature for autheorized API calls.
@@ -37,55 +33,17 @@ class LastfmClient:
         md5.update(string.encode('utf-8'))
         return md5.hexdigest()
 
-    def request_authorization(self, redirect_uri):
-        """ Returns authorization URL.
-
-        Args:
-            redirect_uri (str): Last.fm redirects to this URL.
-        """
-        payload = {
-            'api_key': self.__key,
-            'cb': redirect_uri,
-        }
-        params = ("{}={}".format(param, value)
-                  for param, value
-                  in payload.items())
-        auth_url = 'http://www.last.fm/api/auth/?{}'.format('&'.join(params))
-        return auth_url
-
-    def request_access_token(self, token):
-        """ Request access token from Last.fm.
-
-        Args:
-            token (string): Token from redirect.
-
-        Return:
-            dict: Response from get session call.
-        """
-        payload = {
-            'api_key': self.__key,
-            'method': 'auth.getSession',
-            'token': token
-        }
-        payload['api_sig'] = self.sign(payload)
-        payload['format'] = 'json'
-        response = requests.post(
-            'https://ws.audioscrobbler.com/2.0/', params=payload).json()
-
-        return LastfmCredentials(response['session']['key'])
-
-    def scrobble(self, tracks, credentials):
+    def scrobble(self, tracks):
         """ Scrobble tracks.
 
         Args:
             tracks (list(dict)): List over {name, artists, played_at}
             credentials (LastfmCredentials): LastFM API credentials object.
         """
-        print(credentials.session_key)
         payload = {
-            'api_key': self.__key,
+            'api_key': self.creds.api_key,
             'method': 'track.scrobble',
-            'sk': credentials.session_key
+            'sk': self.creds.session_key
         }
 
         for i, track in enumerate(tracks):
