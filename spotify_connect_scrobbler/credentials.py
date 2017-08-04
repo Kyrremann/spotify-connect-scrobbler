@@ -15,6 +15,9 @@ class LastfmCredentials:
     def __init__(self, session_key):
         self.session_key = session_key
 
+    def todict(self):
+        return {'session_key': self.session_key}
+
 
 class SpotifyCredentials:
     """Spotify credentials contains access and refresh tokens for requests to
@@ -32,6 +35,12 @@ class SpotifyCredentials:
         self.token_type = token_type
         self.refresh_token = refresh_token
         self.scope = scope
+
+    def todict(self):
+        return {'access_token': self.access_token,
+                'token_type': self.token_type,
+                'refresh_token': self.refresh_token,
+                'scope': self.scope}
 
     def update(self, new_credentials):
         """Update the credentials after new tokens were retrieve with the
