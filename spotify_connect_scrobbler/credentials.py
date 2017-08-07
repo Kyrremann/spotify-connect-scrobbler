@@ -5,15 +5,11 @@ class LastfmCredentials:
         session_key (str): Session key returned by the authentication endpoint.
     """
 
-    def __init__(self, api_key, api_secret, session_key):
-        self.api_key = api_key
-        self.api_secret = api_secret
+    def __init__(self, session_key):
         self.session_key = session_key
 
     def todict(self):
-        return {'api_key': self.api_key,
-                'api_secret': self.api_secret,
-                'session_key': self.session_key}
+        return {'session_key': self.session_key}
 
 
 class SpotifyCredentials:
@@ -27,18 +23,14 @@ class SpotifyCredentials:
         scope (str): Scope for all API calls. This should not change often.
     """
 
-    def __init__(self, client_id, client_secret, access_token, token_type, refresh_token, scope):
-        self.client_id = client_id
-        self.client_secret = client_secret
+    def __init__(self, access_token, token_type, refresh_token, scope):
         self.access_token = access_token
         self.token_type = token_type
         self.refresh_token = refresh_token
         self.scope = scope
 
     def todict(self):
-        return {'client_id': self.client_id,
-                'client_secret': self.client_secret,
-                'access_token': self.access_token,
+        return {'access_token': self.access_token,
                 'token_type': self.token_type,
                 'refresh_token': self.refresh_token,
                 'scope': self.scope}
@@ -68,12 +60,8 @@ class Credentials:
 
     def load_from_document(document):
         lastfm = LastfmCredentials(
-            document['lastfm']['api_key'],
-            document['lastfm']['api_secret'],
             document['lastfm']['session_key'])
         spotify = SpotifyCredentials(
-            document['spotify']['client_id'],
-            document['spotify']['client_secret'],
             document['spotify']['access_token'],
             document['spotify']['token_type'],
             document['spotify']['refresh_token'],

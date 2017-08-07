@@ -3,6 +3,7 @@ import dateutil.parser
 from dateutil.tz import tzutc
 import os
 
+from .credentials import Credentials
 from .lastfm import LastfmClient
 from .spotify import SpotifyClient
 
@@ -28,20 +29,35 @@ def convert_to_lastfm(item):
     return {'name': track, 'artists': artists, 'played_at': played_at}
 
 
-def main(creds):
+# Maybe use a better name, scrobble()?
+def main(json_document):
     """Retrieves the 50 most recently played tracks from Spotify and scrobbles
     them to Last.fm.
     """
-    client = SpotifyClient(creds.spotify)
-    response = client.recently_played_tracks()
+
+    # TODO: Maybe send these variables as arguments to the method
+    SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
+    SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
+    LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
+    LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
+
+    # TODO: We should handle a document with several users, so we can iterate over them later
+    user_credentials = Credentials.load_from_document(json_document)
+
+    client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
+    fmclient = LastfmClient(LASTFM_API_KEY, LASTFM_API_SECRET)
+
+    # while something
+    response = client.recently_played_tracks(user_credentials.spotify)
     tracks = [convert_to_lastfm(item) for item in response['items']]
 
-    fmclient = LastfmClient(creds.lastfm)
-    scrobbles = fmclient.scrobble(tracks)
+    scrobbles = fmclient.scrobble(user_credentials.lastfm, tracks)
+    # while end
 
     # The credentials might have changed, so we return them to whoever called us
-    return creds
+    # TODO: How to do this with several users, export the json?
+    return user_credentials
 
 
 if __name__ == "__main__":
-    # Not supported anymore, or yet...
+    print("Not supported anymore, or yet...")
