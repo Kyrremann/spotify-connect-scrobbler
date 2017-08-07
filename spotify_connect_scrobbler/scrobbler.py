@@ -41,7 +41,8 @@ def main(json_document):
     LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
     LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
 
-    # TODO: We should handle a document with several users, so we can iterate over them later
+    # TODO: We should handle a document with several users, so we
+    # can iterate over them later
     user_credentials = Credentials.load_from_document(json_document)
 
     client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
@@ -51,10 +52,11 @@ def main(json_document):
     response = client.recently_played_tracks(user_credentials.spotify)
     tracks = [convert_to_lastfm(item) for item in response['items']]
 
-    scrobbles = fmclient.scrobble(user_credentials.lastfm, tracks)
+    fmclient.scrobble(user_credentials.lastfm, tracks)
     # while end
 
-    # The credentials might have changed, so we return them to whoever called us
+    # The credentials might have changed, so we return them to whoever
+    # called us
     # TODO: How to do this with several users, export the json?
     return user_credentials
 

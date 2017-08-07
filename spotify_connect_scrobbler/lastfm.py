@@ -2,6 +2,9 @@
 import hashlib
 import requests
 
+from .credentials import LastfmCredentials
+
+
 class LastfmClient:
     """ A simple client for the Last.fm API."""
 

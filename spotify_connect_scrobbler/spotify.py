@@ -4,6 +4,9 @@ import requests
 import secrets
 import sys
 
+from .credentials import SpotifyCredentials
+
+
 class SpotifyClient:
     """ A simple client for the Spotify Web API."""
 
@@ -39,7 +42,7 @@ class SpotifyClient:
             'state': request_secret
         }
         params = ("{}={}".format(param, value)
-                for param, value
+                  for param, value
                   in payload.items())
         auth_url = 'https://accounts.spotify.com/authorize?{}'.format(
             '&'.join(params))
@@ -99,14 +102,15 @@ class SpotifyClient:
         """Query Spotify for the recently played tracks of user.
 
         Args:
-            credentials (SpotifyCredentials): The authentication credentials returned
-                by Spotify.
+            credentials (SpotifyCredentials): The authentication
+                credentials returned by Spotify.
 
         Returns:
             dict: A dictionary including tracks and metadata.
         """
         payload = {}
-        token = "{} {}".format(credentials.token_type, credentials.access_token)
+        token = "{} {}".format(credentials.token_type,
+                               credentials.access_token)
         headers = {'Authorization': token}
         response = requests.get(
             'https://api.spotify.com/v1/me/player/recently-played?limit=50',
@@ -117,8 +121,11 @@ class SpotifyClient:
             return response.json()
         elif response.status_code == 401:
             print("Spotify access token expired")
-            # TODO We should note that this function changes the object used, or just return the result from refresh_access_token()
-            credentials.update(self.refresh_access_token(credentials.refresh_token))
+            # TODO We should note that this function changes the object used,
+            # or just return the result from refresh_access_token()
+            credentials.update(
+                self.refresh_access_token(credentials.refresh_token)
+            )
             # Retry
             return self.recently_played_tracks(credentials)
         else:
