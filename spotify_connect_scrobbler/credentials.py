@@ -58,17 +58,30 @@ class Credentials:
         self.spotify = spotify
         self.document_id = document_id
 
-    def load_from_document(document):
+    def load_from_dict(credentials_dict):
+        """Load Spotify and Lastfm credentials from a dict.
+
+        Args:
+            credentials_dict: A dictonary with the credentials. Need to look like this:
+                   {
+                     'lastfm': { 'session_key': 'key' }
+                     'spotify: {
+                       'access_token': 'token',
+                       'token_type': 'the type of token',
+                       'refresh_token': 'token',
+                       'scope': 'scope of the credentials',
+                   }
+        """
         lastfm = LastfmCredentials(
-            document['lastfm']['session_key'])
+            credentials_dict['lastfm']['session_key'])
         spotify = SpotifyCredentials(
-            document['spotify']['access_token'],
-            document['spotify']['token_type'],
-            document['spotify']['refresh_token'],
-            document['spotify']['scope']
+            credentials_dict['spotify']['access_token'],
+            credentials_dict['spotify']['token_type'],
+            credentials_dict['spotify']['refresh_token'],
+            credentials_dict['spotify']['scope']
         )
 
-        return Credentials(lastfm, spotify, str(document['_id']))
+        return Credentials(lastfm, spotify, str(credentials_dict['_id']))
 
     def todict(self):
         data = {}
