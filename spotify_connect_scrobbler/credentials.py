@@ -62,7 +62,8 @@ class Credentials:
         """Load Spotify and Lastfm credentials from a dict.
 
         Args:
-            credentials_dict: A dictonary with the credentials. Need to look like this:
+            credentials_dict: A dictonary with the credentials.
+            Need to look like this:
                    {
                      'lastfm': { 'session_key': 'key' }
                      'spotify: {
