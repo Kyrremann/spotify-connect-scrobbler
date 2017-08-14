@@ -17,8 +17,8 @@ class SpotifyClient:
             client_id (str): Identifies the client and the app.
             client_secret (str): API secret.
         """
-        self._client_id = client_id
-        self._client_secret = client_secret
+        self.__client_id = client_id
+        self.__client_secret = client_secret
 
     def _make_authorization_headers(self):
         auth = "{}:{}".format(self.__client_id, self.__client_secret)
