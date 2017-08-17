@@ -29,7 +29,7 @@ def convert_to_lastfm(item):
     return {'name': track, 'artists': artists, 'played_at': played_at}
 
 
-def scrobble(credentials_dict, spotify_client, lastfm_client)
+def scrobble(credentials_dict, spotify_client, lastfm_client):
     """Retrieves the 50 most recently played tracks from Spotify and scrobbles
     them to Last.fm.
     """
