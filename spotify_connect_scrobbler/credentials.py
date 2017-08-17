@@ -53,10 +53,9 @@ class SpotifyCredentials:
 class Credentials:
     """Main object for LastFM and Spotify credentials"""
 
-    def __init__(self, lastfm, spotify, document_id=None):
+    def __init__(self, lastfm, spotify):
         self.lastfm = lastfm
         self.spotify = spotify
-        self.document_id = document_id
 
     def load_from_dict(credentials_dict):
         """Load Spotify and Lastfm credentials from a dict.
@@ -82,7 +81,7 @@ class Credentials:
             credentials_dict['spotify']['scope']
         )
 
-        return Credentials(lastfm, spotify, str(credentials_dict['_id']))
+        return Credentials(lastfm, spotify)
 
     def todict(self):
         data = {}
