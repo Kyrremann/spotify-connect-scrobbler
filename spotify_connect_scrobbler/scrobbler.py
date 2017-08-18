@@ -44,16 +44,3 @@ def scrobble(credentials_dict, spotify_client, lastfm_client):
     # The credentials might have changed, so we return them to whoever
     # called us
     return user_credentials
-
-
-if __name__ == "__main__":
-    SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
-    SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
-    LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
-    LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
-
-    spotify_client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
-    lastfm_client = LastfmClient(LASTFM_API_KEY, LASTFM_API_SECRET)
-
-    # TODO: Load the document from a file
-    scrobble(credentials_dict, spotify_client, lastfm_client)
