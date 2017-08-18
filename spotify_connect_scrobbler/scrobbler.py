@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 import dateutil.parser
 from dateutil.tz import tzutc
-import os
 
 from .credentials import Credentials
-from .lastfm import LastfmClient
-from .spotify import SpotifyClient
 
 
 def to_posix_timestamp(dt):
