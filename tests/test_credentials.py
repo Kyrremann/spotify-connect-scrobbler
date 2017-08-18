@@ -31,4 +31,3 @@ def test_load_from_dict():
     assert creds.spotify.token_type == "Bearer"
     assert creds.spotify.refresh_token == "more refreshing"
     assert creds.spotify.scope == "scoped"
-    assert creds.document_id == "some_id"
