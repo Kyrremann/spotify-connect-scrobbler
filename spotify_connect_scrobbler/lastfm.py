@@ -25,7 +25,7 @@ class LastfmClient:
             redirect_uri (str): Last.fm redirects to this URL.
         """
         payload = {
-            'api_key': self.__key,
+            'api_key': self.__api_key,
             'cb': redirect_uri,
         }
         params = ("{}={}".format(param, value)
@@ -44,7 +44,7 @@ class LastfmClient:
             dict: Response from get session call.
         """
         payload = {
-            'api_key': self.__key,
+            'api_key': self.__api_key,
             'method': 'auth.getSession',
             'token': token
         }
