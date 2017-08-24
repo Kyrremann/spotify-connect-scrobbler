@@ -2,44 +2,53 @@
 
 [![Build Status](https://travis-ci.org/jeschkies/spotify-connect-scrobbler.svg?branch=master)](https://travis-ci.org/jeschkies/spotify-connect-scrobbler) [![codecov](https://codecov.io/gh/jeschkies/spotify-connect-scrobbler/branch/master/graph/badge.svg)](https://codecov.io/gh/jeschkies/spotify-connect-scrobbler)
 
-A Small Webservice That Scrobbles Spotify Connect Plays
+A Small library That Scrobbles Spotify Connect Plays
 
 # Setup
 
-The best way to run this scrobbler is with [virtualenv](https://virtualenv.pypa.io).
-Assuming you have already virtualenv and Python 3.6 installed, create a new environment
+The Scrobbler is written for Python3.6 and up, and it dosn't have an CLI any more. At least for now.
+It's purely a library that you can interact with through your Python application.
 
-  ```bash
-  virtualenv <path to env> --python=python3.6
-  ```
+See below for a simple example where the users credentials is retreive from OS ENVS:
 
-Activate the environment and install the scrobbler from git:
+```python
+from spotify_connect_scrobbler import scrobbler
+from database import Database
 
-  ```bash
-  cd <path to env>
-  source bin/activate
-  bin/pip install git+https://github.com/jeschkies/spotify-connect-scrobbler.git
-  ```
+import sys
+import os
+import json
 
-Verify that the scrobbler is avialable:
 
-  ```bash
-  scrobbler --help
-  ```
+def start_scrobbling():
+    spotify_client = scrobbler.SpotifyClient(
+        os.environ['SPOTIFY_CLIENT_ID'],
+        os.environ['SPOTIFY_CLIENT_SECRET'])
+    lastfm_client = scrobbler.LastfmClient(
+        os.environ['LASTFM_API_KEY'],
+        os.environ['LASTFM_API_SECRET'])
 
-The scrobbler requires access tokens to the Spotify web API and Last.fm API.
-You authenticate your accounts with
+    user_credentials = {
+        "lastfm": {
+            "session_key": os.environ['LASTFM_SESSION_KEY']
+        },
+        "spotify": {
+            "access_token": os.environ['SPOTIFY_ACCESS_TOKEN'],
+            "token_type": os.environ['SPOTIFY_BEARER'],
+            "refresh_token": os.environ['SPOTIFY_REFRESH_TOKEN'],
+            "scope": os.environ['SPOTIFY_SCOPE']
+        }
+    }
 
-  ```
-  SPOTIFY_CLIENT_ID=<Your app ID> \
-  SPOTIFY_CLIENT_SECRET=<Your app secret> \
-  LASTFM_API_KEY=<Your app key> \
-  LASTFM_API_SECRET=<Your app secret> \
-  scrobbler-auth <path to credentials file>
-  ```
+    credentials = scrobbler.scrobble(
+        user_credentials, spotify_client, lastfm_client)
 
-After you've followed the instructions the access tokens are saved to the
-credentials file you've specified. This file is required by the scrobbler.
+
+if __name__ == "__main__":
+       start_scrobbling()
+```
+
+As you can see, the library require that you create the `LastfmClient` and `SpotifyClient` for it, so it won't dictate how you store you credentials and keys. Also, the method `scrobble.scrobble()` will return an updated user credentials if it's been changed. A typical scenario for this, is when the Spotify access token has expired.
 
 # Build Instructions
 
