@@ -108,12 +108,38 @@ class SpotifyClient:
         Returns:
             dict: A dictionary including tracks and metadata.
         """
+        return get_request_spotify(credentials,
+                         'https://api.spotify.com/v1/me/player/recently-played?limit=50')
+
+    def get_user_id(self, credentials):
+        """Retrieves the username of the Spotify user.
+
+        Args:
+            credentials (SpotifyCredentials): The authentication
+                credentials returned by Spotify.
+
+        Returns:
+            str: The username of the Spotify user.
+        """
+        return get_request_spotify(credentials, 'https://api.spotify.com/v1/me')['id']
+
+    def get_request_spotify(self, credentials, request_url)
+        """Runs HTTP-GET request.
+
+        Args:
+            credentials (SpotifyCredentials): The authentication
+                credentials returned by Spotify.
+            request_url (Str): The URL to HTTP-GET.
+
+        Returns:
+            dict: A dictionary representation of the json-response.
+        """
         payload = {}
         token = "{} {}".format(credentials.token_type,
                                credentials.access_token)
         headers = {'Authorization': token}
         response = requests.get(
-            'https://api.spotify.com/v1/me/player/recently-played?limit=50',
+            request_url,
             data=payload,
             headers=headers
         )
@@ -127,34 +153,7 @@ class SpotifyClient:
                 self.refresh_access_token(credentials.refresh_token)
             )
             # Retry
-            return self.recently_played_tracks(credentials)
+            return self.get_request_spotify(credentials, request_url)
         else:
-            # TODO: To support several users, we can't exit here
             print(response.text)
-            sys.exit(1)
-
-    def get_user_id(self, credentials):
-        payload = {}
-        token = "{} {}".format(credentials.token_type,
-                               credentials.access_token)
-        headers = {'Authorization': token}
-        response = requests.get(
-            'https://api.spotify.com/v1/me',
-            data=payload,
-            headers=headers
-        )
-        if response.ok:
-            return response.json()['id']
-        elif response.status_code == 401:
-            print("Spotify access token expired")
-            # TODO We should note that this function changes the object used,
-            # or just return the result from refresh_access_token()
-            credentials.update(
-                self.refresh_access_token(credentials.refresh_token)
-            )
-            # Retry
-            return self.get_user_id(credentials)
-        else:
-            # TODO: To support several users, we can't exit here
-            print(response.text)
-            sys.exit(1)
+            raise Exception('Got status code {} from Spotify, which we don\'t'.format(response.status_code))
