@@ -1,10 +1,3 @@
-from bson.objectid import ObjectId
-
-import json
-import os
-import pymongo
-
-
 class LastfmCredentials:
     """LastFM API credentials.
 
@@ -58,52 +51,45 @@ class SpotifyCredentials:
 
 
 class Credentials:
+    """Main object for LastFM and Spotify credentials"""
 
-    def __init__(self, lastfm, spotify, document_id=None):
+    def __init__(self, lastfm, spotify):
         self.lastfm = lastfm
         self.spotify = spotify
-        self.document_id = document_id
 
-    def save(self):
-        """Save credentials to MongoDB database.
+    def load_from_dict(credentials_dict):
+        """Load Spotify and Lastfm credentials from a dict.
+
+        Args:
+            credentials_dict: A dictonary with the credentials.
+            Need to look like this:
+                   {
+                     'lastfm': { 'session_key': 'key' }
+                     'spotify: {
+                       'access_token': 'token',
+                       'token_type': 'the type of token',
+                       'refresh_token': 'token',
+                       'scope': 'scope of the credentials',
+                   }
         """
+        lastfm = LastfmCredentials(
+            credentials_dict['lastfm']['session_key'])
+        spotify = SpotifyCredentials(
+            credentials_dict['spotify']['access_token'],
+            credentials_dict['spotify']['token_type'],
+            credentials_dict['spotify']['refresh_token'],
+            credentials_dict['spotify']['scope']
+        )
+
+        return Credentials(lastfm, spotify)
+
+    def todict(self):
         data = {}
 
         if self.lastfm is not None:
-            data['lastfm'] = {'session_key': self.lastfm.session_key}
+            data['lastfm'] = self.lastfm.todict()
 
         if self.spotify is not None:
-            data['spotify'] = {
-                'access_token': self.spotify.access_token,
-                'token_type': self.spotify.token_type,
-                'refresh_token': self.spotify.refresh_token,
-                'scope': self.spotify.scope
-            }
+            data['spotify'] = self.spotify.todict()
 
-        client = pymongo.MongoClient(os.environ['MONGODB_URI'])
-        db = client[os.environ['MONGODB_DATABASE']]
-        collection = db[os.environ['MONGODB_COLLECTION']]
-
-        collection.update_one({'_id': ObjectId(self.document_id)}, {'$set': data})
-
-
-def load():
-    """Load credentials from MongoDB database.
-
-    Returns:
-        Credentials: object with LastFM and Spotify credentials.
-    """
-    client = pymongo.MongoClient(os.environ['MONGODB_URI'])
-    db = client[os.environ['MONGODB_DATABASE']]
-    collection = db[os.environ['MONGODB_COLLECTION']]
-    document = collection.find_one()
-
-    lastfm = LastfmCredentials(document['lastfm']['session_key'])
-    spotify = SpotifyCredentials(
-        document['spotify']['access_token'],
-        document['spotify']['token_type'],
-        document['spotify']['refresh_token'],
-        document['spotify']['scope']
-    )
-
-    return Credentials(lastfm, spotify, str(document['_id']))
+        return data

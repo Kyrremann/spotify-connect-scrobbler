@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 import dateutil.parser
 from dateutil.tz import tzutc
-import os
 
-from . import credentials
-from .lastfm import LastfmClient
-from .spotify import SpotifyClient
+from .credentials import Credentials
 
 
 def to_posix_timestamp(dt):
@@ -29,29 +26,18 @@ def convert_to_lastfm(item):
     return {'name': track, 'artists': artists, 'played_at': played_at}
 
 
-def main():
+def scrobble(credentials_dict, spotify_client, lastfm_client):
     """Retrieves the 50 most recently played tracks from Spotify and scrobbles
     them to Last.fm.
     """
-    SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
-    SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
-    LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
-    LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
 
-    creds = credentials.load()
+    user_credentials = Credentials.load_from_dict(credentials_dict)
 
-    client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
-    response = client.recently_played_tracks(creds.spotify)
+    response = spotify_client.recently_played_tracks(user_credentials.spotify)
     tracks = [convert_to_lastfm(item) for item in response['items']]
-    print(tracks)
 
-    fmclient = LastfmClient(LASTFM_API_KEY, LASTFM_API_SECRET)
-    scrobbles = fmclient.scrobble(tracks, creds.lastfm)
-    print(scrobbles)
+    lastfm_client.scrobble(user_credentials.lastfm, tracks)
 
-    # The credentials might have changed.
-    creds.save()
-
-
-if __name__ == "__main__":
-    main()
+    # The credentials might have changed, so we return them to whoever
+    # called us
+    return user_credentials
