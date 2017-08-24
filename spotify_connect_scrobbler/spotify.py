@@ -2,7 +2,6 @@
 import base64
 import requests
 import secrets
-import sys
 
 from .credentials import SpotifyCredentials
 
@@ -108,8 +107,9 @@ class SpotifyClient:
         Returns:
             dict: A dictionary including tracks and metadata.
         """
-        return get_request_spotify(credentials,
-                         'https://api.spotify.com/v1/me/player/recently-played?limit=50')
+        return self.get_request_spotify(
+            credentials,
+            'https://api.spotify.com/v1/me/player/recently-played?limit=50')
 
     def get_user_id(self, credentials):
         """Retrieves the username of the Spotify user.
@@ -121,9 +121,11 @@ class SpotifyClient:
         Returns:
             str: The username of the Spotify user.
         """
-        return get_request_spotify(credentials, 'https://api.spotify.com/v1/me')['id']
+        return self.get_request_spotify(
+            credentials,
+            'https://api.spotify.com/v1/me')['id']
 
-    def get_request_spotify(self, credentials, request_url)
+    def get_request_spotify(self, credentials, request_url):
         """Runs HTTP-GET request.
 
         Args:
@@ -156,4 +158,6 @@ class SpotifyClient:
             return self.get_request_spotify(credentials, request_url)
         else:
             print(response.text)
-            raise Exception('Got status code {} from Spotify, which we don\'t'.format(response.status_code))
+            raise Exception(
+                'Got status code {} from Spotify, which we don\'t'
+                .format(response.status_code))
