@@ -89,8 +89,10 @@ class LastfmClient:
 
         for i, track in enumerate(tracks):
             payload["track[{}]".format(i)] = track['name']
+            payload["album[{}]".format(i)] = track['album']
             payload["artist[{}]".format(i)] = track['artists'][0]
             payload["timestamp[{}]".format(i)] = track['played_at']
+            print('Scrobbling track: {}'.format(track))
 
         payload['api_sig'] = self.sign(payload)
         payload['format'] = 'json'

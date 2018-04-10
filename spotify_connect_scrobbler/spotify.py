@@ -111,6 +111,22 @@ class SpotifyClient:
             credentials,
             'https://api.spotify.com/v1/me/player/recently-played?limit=50')
 
+    def get_track(self, track_id, credentials):
+        """Get Spotify catalog information for a single track identified by
+        its unique Spotify ID.
+
+        Args:
+            track_id: The Spotify ID for the track
+            credentials (SpotifyCredentials): The authentication
+                credentials returned by Spotify.
+
+        Returns:
+            dict: A dictionary including track information.
+        """
+        return self.get_request_spotify(
+            credentials,
+            'https://api.spotify.com/v1/tracks/{}'.format(track_id))
+
     def get_user_id(self, credentials):
         """Retrieves the username of the Spotify user.
 
