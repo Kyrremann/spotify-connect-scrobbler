@@ -31,7 +31,8 @@
         "preview_url": "https://p.scdn.co/mp3-preview/6023e5aac2123d098ce490488966b28838b14fa2",
         "track_number": 9,
         "type": "track",
-        "uri": "spotify:track:2gNfxysfBRfl9Lvi9T3v6R"
+        "uri": "spotify:track:2gNfxysfBRfl9Lvi9T3v6R",
+        "album": "Currents"
       },
       "played_at": "2016-12-13T20:44:04.589Z",
       "context": {
@@ -74,7 +75,8 @@
         "preview_url": "https://p.scdn.co/mp3-preview/05dee1ad0d2a6fa4ad07fbd24ae49d58468e8194",
         "track_number": 1,
         "type": "track",
-        "uri": "spotify:track:2X485T9Z5Ly0xyaghN73ed"
+        "uri": "spotify:track:2X485T9Z5Ly0xyaghN73ed",
+        "album": "Currents"
       },
       "played_at": "2016-12-13T20:42:17.016Z",
       "context": {
