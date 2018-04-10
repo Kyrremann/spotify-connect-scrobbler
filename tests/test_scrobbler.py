@@ -20,12 +20,15 @@ def test_datetime_conversion():
 
 
 def test_convert_to_lastfm(recently_played_response):
-    tracks = [convert_to_lastfm(i) for i in recently_played_response['items']]
+    tracks = [convert_to_lastfm(item)
+              for item in recently_played_response['items']]
 
     assert tracks[0]['name'] == "Disciples"
+    assert tracks[0]['album'] == "Currents"
     assert tracks[0]['artists'] == ["Tame Impala"]
     assert tracks[0]['played_at'] == 1481661844
 
     assert tracks[1]['name'] == "Let It Happen"
+    assert tracks[1]['album'] == "Currents"
     assert tracks[1]['artists'] == ["Tame Impala"]
     assert tracks[1]['played_at'] == 1481661737
