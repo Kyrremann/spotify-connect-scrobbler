@@ -1,6 +1,7 @@
 # A Spotify Connect Scrobbler
 
-[![Build Status](https://travis-ci.org/jeschkies/spotify-connect-scrobbler.svg?branch=master)](https://travis-ci.org/jeschkies/spotify-connect-scrobbler) [![codecov](https://codecov.io/gh/jeschkies/spotify-connect-scrobbler/branch/master/graph/badge.svg)](https://codecov.io/gh/jeschkies/spotify-connect-scrobbler)
+[![Build Status](https://travis-ci.org/Kyrremann/spotify-connect-scrobbler.svg?branch=master)](https://travis-ci.org/Kyrremann/spotify-connect-scrobbler)
+[![codecov](https://codecov.io/gh/Kyrremann/spotify-connect-scrobbler/branch/master/graph/badge.svg)](https://codecov.io/gh/Kyrremann/spotify-connect-scrobbler)
 
 A Small library That Scrobbles Spotify Connect Plays
 
